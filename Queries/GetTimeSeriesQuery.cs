@@ -12,13 +12,11 @@ namespace AzureDataExplorerApp.Services.Interfaces
         public string AssetId { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+        public double Interval { get; set; }
     }
 
     public class Handler : RequestHandler<GetTimeSeriesRequestModel, ICollection<TimeSerieValueModel>>
     {
-        public Handler()
-        {
-        }
         protected override ICollection<TimeSerieValueModel> Handle(GetTimeSeriesRequestModel request)
         {
             const string Cluster = "https://help.kusto.windows.net";
@@ -29,7 +27,8 @@ namespace AzureDataExplorerApp.Services.Interfaces
             using var queryProvider = KustoClientFactory.CreateCslQueryProvider(connectionBuilder);
             var query = $"SamplePowerRequirementHistorizedData" +
                 $"| where twinId == '{request.AssetId}'" +
-                $"| where timestamp between (datetime('{request.Start:yyyy-MM-ddTHH:mm}') .. datetime('{request.End:yyyy-MM-ddTHH:mm}'))";
+                $"| where timestamp between (datetime('{request.Start:yyyy-MM-ddTHH:mm}') .. datetime('{request.End:yyyy-MM-ddTHH:mm}'))" +
+                $"| summarize avg(value) by bin(timestamp, {request.Interval}s)";
 
             var requestId = Guid.NewGuid().ToString();
             var clientRequestProperties = new ClientRequestProperties() { ClientRequestId = requestId };
@@ -40,7 +39,7 @@ namespace AzureDataExplorerApp.Services.Interfaces
             {
                 var timeSerieValue = new TimeSerieValueModel {
                     DateTime = reader.GetDateTime(0),
-                    Value = reader.GetDouble(4)
+                    Value = reader.GetDouble(1)
                 };
                 timeSeries.Add(timeSerieValue);
             }

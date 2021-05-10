@@ -15,9 +15,36 @@ namespace AzureDataExplorerApp.Services
 
         public IMediator Mediator { get; }
 
-        public async Task<ICollection<TimeSerieValueModel>> GetTimeSeries(string assetId, DateTime start, DateTime end)
+        public async Task<ICollection<TimeSerieValueModel>> GetTimeSeries(string assetId, DateTime start, DateTime end, double interval)
         {
-            return await Mediator.Send(new GetTimeSeriesRequestModel { AssetId = assetId, Start = start, End = end });
+            if (interval == 0)
+            {
+                var period = end - start;
+                interval = CalculateInterval(period);
+            }
+
+            return await Mediator.Send(new GetTimeSeriesRequestModel {
+                AssetId = assetId, Start = start, End = end, Interval = interval
+            });
+        }
+
+        private static double CalculateInterval(TimeSpan period)
+        {
+            double interval;
+            if (period > new TimeSpan(30, 0, 0, 0))
+            {
+                interval = new TimeSpan(1, 0, 0, 0).TotalSeconds;
+            }
+            else if (period > new TimeSpan(7, 0, 0, 0))
+            {
+                interval = new TimeSpan(1, 0, 0).TotalSeconds;
+            }
+            else
+            {
+                interval = new TimeSpan(0, 5, 0).TotalSeconds;
+            }
+
+            return interval;
         }
     }
 }
