@@ -1,6 +1,7 @@
 ﻿using AzureDataExplorerApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,10 +11,6 @@ namespace AzureDataExplorerApp.Controllers
     [Route("[controller]")]
     public class TimeSeriesController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
         private readonly ITimeSeriesService _timeSeriesService;
         private readonly ILogger<TimeSeriesController> _logger;
 
@@ -23,10 +20,10 @@ namespace AzureDataExplorerApp.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<ICollection<TimeSerieValueModel>> Get()
+        [HttpGet("{assetId}")]
+        public async Task<ICollection<TimeSerieValueModel>> Get(string assetId, DateTime start, DateTime end)
         {
-            return await _timeSeriesService.GetTimeSeries();
+            return await _timeSeriesService.GetTimeSeries(assetId, start, end);
         }
     }
 }

@@ -7,8 +7,11 @@ using System.Collections.Generic;
 
 namespace AzureDataExplorerApp.Services.Interfaces
 {
-    public class GetTimeSeriesRequestModel : IRequest<ICollection<TimeSerieValueModel>>
+    public record GetTimeSeriesRequestModel : IRequest<ICollection<TimeSerieValueModel>>
     {
+        public string AssetId { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
     }
 
     public class Handler : RequestHandler<GetTimeSeriesRequestModel, ICollection<TimeSerieValueModel>>
@@ -20,10 +23,14 @@ namespace AzureDataExplorerApp.Services.Interfaces
         {
             const string Cluster = "https://help.kusto.windows.net";
             const string Database = "Samples";
+
             var connectionBuilder = new KustoConnectionStringBuilder(Cluster, Database).WithAadAzCliAuthentication();
 
             using var queryProvider = KustoClientFactory.CreateCslQueryProvider(connectionBuilder);
-            var query = "SamplePowerRequirementHistorizedData | limit 10";
+            var query = $"SamplePowerRequirementHistorizedData" +
+                $"| where twinId == '{request.AssetId}'" +
+                $"| where timestamp between (datetime('{request.Start:yyyy-MM-ddTHH:mm}') .. datetime('{request.End:yyyy-MM-ddTHH:mm}'))";
+
             var requestId = Guid.NewGuid().ToString();
             var clientRequestProperties = new ClientRequestProperties() { ClientRequestId = requestId };
 
