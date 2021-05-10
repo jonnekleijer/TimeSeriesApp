@@ -20,6 +20,14 @@ namespace AzureDataExplorerApp.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get timeseries
+        /// </summary>
+        /// <param name="assetId">Id of your asset</param>
+        /// <param name="start">Start of timeseries</param>
+        /// <param name="end">End of timeseries</param>
+        /// <response code="200">Successful response - returns a list of timeseries values</response>
+        /// <returns></returns>
         [HttpGet("{assetId}")]
         public async Task<ICollection<TimeSerieValueModel>> Get(string assetId, DateTime start, DateTime end)
         {

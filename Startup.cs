@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.IO;
 
 namespace AzureDataExplorerApp
 {
@@ -24,9 +25,11 @@ namespace AzureDataExplorerApp
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "AzureDataExplorerApp", Version = "v1" });
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TimeSeriesApp", Version = "v1" });
+
+                var filePath = Path.Combine(System.AppContext.BaseDirectory, "TimeSeriesApp.xml");
+                c.IncludeXmlComments(filePath);
             });
 
             services.AddMediatR(typeof(Startup));
@@ -41,7 +44,7 @@ namespace AzureDataExplorerApp
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AzureDataExplorerApp v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
             }
             app.UseHttpsRedirection();
 
@@ -49,8 +52,7 @@ namespace AzureDataExplorerApp
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
+            app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
             });
         }
