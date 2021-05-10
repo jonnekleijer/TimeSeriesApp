@@ -1,8 +1,10 @@
-﻿namespace AzureDataExplorerApp.Services.Interfaces
+﻿using System;
+
+namespace AzureDataExplorerApp.Services.Interfaces
 {
     public class TimeSerieValueModel
     {
-        public long TimeStamp { get; set; }
         public double Value { get; set; }
+        public DateTime DateTime { get; set; }
     }
 }
