@@ -1,6 +1,5 @@
 ﻿using AzureDataExplorerApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,12 +11,10 @@ namespace AzureDataExplorerApp.Controllers
     public class TimeSeriesController : ControllerBase
     {
         private readonly ITimeSeriesService _timeSeriesService;
-        private readonly ILogger<TimeSeriesController> _logger;
 
-        public TimeSeriesController(ITimeSeriesService timeSeriesService, ILogger<TimeSeriesController> logger)
+        public TimeSeriesController(ITimeSeriesService timeSeriesService)
         {
             _timeSeriesService = timeSeriesService;
-            _logger = logger;
         }
 
         /// <summary>

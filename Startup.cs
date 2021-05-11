@@ -1,4 +1,4 @@
-using AzureDataExplorerApp.Services;
+﻿using AzureDataExplorerApp.Services;
 using AzureDataExplorerApp.Services.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -23,9 +23,9 @@ namespace AzureDataExplorerApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
-            services.AddSwaggerGen(c => {
+            services.AddSwaggerGen(c =>
+            {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TimeSeriesApp", Version = "v1" });
 
                 var filePath = Path.Combine(System.AppContext.BaseDirectory, "TimeSeriesApp.xml");
@@ -52,7 +52,8 @@ namespace AzureDataExplorerApp
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => {
+            app.UseEndpoints(endpoints =>
+            {
                 endpoints.MapControllers();
             });
         }
